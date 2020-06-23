@@ -1,5 +1,5 @@
 <template>
-  <v-dialog max-width="600px">
+  <v-dialog v-model="dialog" max-width="600px">
     <template v-slot:activator="{ on, attrs }">
       <v-btn
         depressed
@@ -55,7 +55,9 @@
             <v-col cols="6">
               <v-layout align-items-center row justify-content-center>
                 <v-flex>
-                  <v-btn @click="submit" depressed class="primary  mx-0 mt-3">
+                  <v-btn
+                  :loading="loading"
+                   @click="submit" depressed class="primary  mx-0 mt-3">
                     Add project
                   </v-btn>
                 </v-flex>
@@ -70,6 +72,7 @@
 
 <script>
 import { format } from "date-fns";
+import db from "@/fb";
 
 export default {
   data() {
@@ -77,6 +80,8 @@ export default {
       title: "",
       content: "",
       due: null,
+      loading:false,
+      dialog:false,
       inputRules: [
         (v) => v.length >= 3 || "Minimum  3 characters are required",
       ],
@@ -85,7 +90,26 @@ export default {
   methods: {
     submit() {
       if (this.$refs.form.validate()) {
-        console.log(this.title, this.content);
+
+       this.loading=true
+       
+        const project = {
+          title: this.title,
+          content: this.content,
+          due: format(new Date(this.due), "do MMM yyyy"),
+          person: "Sai",
+          status: "ongoing",
+        };
+        db.collection('projects').add(project)
+        .then(()=>{
+        this.loading=false
+        this.dialog=false
+        this.$emit('projectAdded')
+})
+        .catch(err=>{
+          console.log(err)
+        })
+        
       }
     },
   },

@@ -24,6 +24,10 @@
 </template>
 
 <script>
+
+import db from '@/fb'
+
+
 export default {
   name: "Home",
   components: {},
@@ -66,9 +70,23 @@ export default {
   computed:{
     myProjects(){
       return this.projects.filter(project =>{
-        return project.person==='sai'
+        return project.person==='Sai'
       })
     }
+  },
+  created(){
+     db.collection('projects').onSnapshot(res=>{
+       const changes=res.docChanges()
+       
+       changes.forEach(change=>{
+         if(change.type === 'added' ){
+           this.projects.push({
+             ...change.doc.data(),
+             id:change.doc.id
+           })            
+         }
+       })
+     })
   }
 };
 </script>

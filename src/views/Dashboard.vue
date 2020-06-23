@@ -40,7 +40,7 @@
         </v-flex>
       </v-layout>
 
-      <v-card v-for="project in projects" :key="project" flat class="py-2 px-5">
+      <v-card v-for="project in projects" :key="project.id" flat class="py-2 px-5">
         <v-layout row wrap :class="`pa-3 project_${project.status} `">
           <v-flex xs12 md6>
             <div class="caption grey--text">
@@ -85,6 +85,8 @@
 </template>
 
 <script>
+import db from '@/fb'
+
 export default {
   name: "Home",
   components: {},
@@ -92,24 +94,27 @@ export default {
     return {
       projects: [
         {
+          id:"1",
           title: "Design a new website",
           person: "sai",
           due: "1st Aug,2020",
           status: "ongoing",
         },
         {
+          id:"2",
           title: "lorem ipsum dolor sit am",
           person: "sai9",
           due: "1st Aug,2020",
           status: "overdue",
         },
-        {
+        { id:"3",
           title: "lorem ",
           person: "sai7",
           due: "1st Aug,2020",
           status: "complete",
         },
         {
+          id:"4",
           title: "lorem ipsum",
           person: "sai1",
           due: "1st Aug,2020",
@@ -123,6 +128,20 @@ export default {
       this.projects.sort((a, b) => (a[prop] < b[prop] ? -1 : 1));
     },
   },
+  created(){
+     db.collection('projects').onSnapshot(res=>{
+       const changes=res.docChanges()
+       
+       changes.forEach(change=>{
+         if(change.type === 'added' ){
+           this.projects.push({
+             ...change.doc.data(),
+             id:change.doc.id
+           })            
+         }
+       })
+     })
+  }
 };
 </script>
 
