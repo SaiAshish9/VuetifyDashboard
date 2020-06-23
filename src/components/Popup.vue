@@ -19,9 +19,12 @@
       </v-card-title>
       <v-card-text>
         <v-form class="px-3" ref="form">
-          <v-text-field 
-          :rules="inputRules"          
-          prepend-icon="folder" label="Title" v-model="title">
+          <v-text-field
+            :rules="inputRules"
+            prepend-icon="folder"
+            label="Title"
+            v-model="title"
+          >
           </v-text-field>
           <v-textarea
             :rules="inputRules"
@@ -81,8 +84,8 @@ export default {
   },
   methods: {
     submit() {
-      if(this.$refs.form.validate()){
-      console.log(this.title, this.content);
+      if (this.$refs.form.validate()) {
+        console.log(this.title, this.content);
       }
     },
   },
